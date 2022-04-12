@@ -1,0 +1,58 @@
+{
+    "venues": [
+        {
+            "id": "1",
+            "description": "location1",
+            "name": "location1",
+            "geometry": [
+                21.15351678807413,
+                72.6500129699707
+            ]
+        },
+        {
+            "id": "2",
+            "description": "location2",
+            "name": "location2",
+            "geometry": [
+                21.155037676084085,
+                72.65353202819824
+            ]
+        },
+        {
+            "id": "3",
+            "description": "location3",
+            "name": "location3",
+            "geometry": [
+                21.17128618846456,
+                72.64924049377441
+            ]
+        },
+        {
+            "id": "1",
+            "description": "location4",
+            "name": "location4",
+            "geometry": [
+                21.162241670166484,
+                72.65584945678711
+            ]
+        },
+        {
+            "id": "1",
+            "description": "location5",
+            "name": "location5",
+            "geometry": [
+                21.15879980561845,
+                72.66005516052245
+            ]
+        },
+        {
+            "id": "1",
+            "description": "location6",
+            "name": "location5",
+            "geometry": [
+                21.160400682805484,
+                72.65035629272461
+            ]
+        }
+    ]
+}
