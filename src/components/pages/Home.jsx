@@ -92,7 +92,6 @@ export default class Home extends Component {
     }
 
     alertHistory = () => {
-        console.log("alertHistory=====>");
         this.setState({ message: "", error: false, success: false });
         this.setState({ series: [] });
         axios({ method: 'GET', url: "/api/alerts" })
@@ -444,7 +443,7 @@ export default class Home extends Component {
                             textAlign: 'center'
                         }}>
                             Alerts History
-                        </h3>                       
+                        </h3>
                     </div>
                     {
                         series.length ? (
@@ -462,7 +461,7 @@ export default class Home extends Component {
                     }
                 </div>
 
-               
+
                 <div id="sessionModal" className="modal">
                     <div className="modal-content">
                         <p id="content"

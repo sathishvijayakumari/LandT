@@ -218,7 +218,7 @@ export default class Utilize extends Component {
             opacityTo: 0.9,
           },
         },
-        colors: ['#feb019'],
+        colors: ['#a64dff'],
       },
     }
   }
@@ -262,6 +262,7 @@ export default class Utilize extends Component {
     axios({ method: "GET", url: "/api/utilization/registration?key=" + tagid })
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
+          $("#graph_option").css("display", "none")
           let data = response.data.asset;
           if (data.length !== 0) {
             let det = data[data.length - 1];
@@ -296,27 +297,24 @@ export default class Utilize extends Component {
     let mac = $("#assetId").val();
     console.log(kpiname, "=====>", mac);
     this.optionChange(btn);
-    $("#graph_opt").css("display", "block");
     this.setState({
       message: "", error: false,
       success: false, kpiName: ""
     });
     this.setState({ series: [] });
-    let ddd = { key: btn, kpi: kpiname, tagid: mac }
-    console.log("------->", ddd);
     axios({
       method: 'POST', url: "/api/utilization/report",
       data: { key: btn, kpi: kpiname, tagid: mac }
     })
       .then((response) => {
-        console.log("Response====>", response);
         let data = response.data;
         if (response.status === 200 || response.status === 201) {
           if (data.length !== 0) {
             let value = []
-            for (let i = 0; i < 100; i++) {
+            $("#graph_option").css("display", "block");
+            for (let i = 0; i < data.length; i++) {
               let graphdata = [];
-              let time = data[i].lastseen.substring(0, 19).replace("T", " ");
+              let time = data[i].timestamp.substring(0, 19).replace("T", " ");
               var date = new Date(time);
               var milliseconds = date.getTime();
               graphdata.push(milliseconds);
@@ -357,7 +355,6 @@ export default class Utilize extends Component {
   render() {
     const { message, error,
       success, series, kpiName, cardDet } = this.state;
-    console.log(kpiName,"$$$$$", series);
     return (
       <div className='maindiv' style={{ overflowY: "scroll" }}>
         <div style={{ marginLeft: '35px' }}>
@@ -448,70 +445,30 @@ export default class Utilize extends Component {
 
           <div id="kpi_cards"
             style={{ display: "flex", marginTop: "30px" }}>
-            <div style={{
-              width: '240px',
-              height: '100px',
-              background: 'white',
-              borderRadius: '10px',
-              cursor: "pointer",
-              boxShadow: "rgb(128 128 128 / 20%) 8px 4px 30px 0px",
-            }} onClick={() => this.getLineGraphData("daily", "petrol")}>
-              <p style={{
-                textAlign: 'center',
-                color: '#888F9F',
-                fontFamily: 'Poppins-Regular'
-              }}>Petrol</p>
-              <p style={{
-                textAlign: 'center',
-                fontFamily: 'Poppins-Regular'
-              }}>{cardDet[0]}</p>
+            <div className='utilCard'
+              onClick={() => this.getLineGraphData("daily", "petrol")}>
+              <p className='utilCardText'>Petrol</p>
+              <p className='utilCardText'>{cardDet[0]}</p>
             </div>
 
-            <div style={{
-              width: '240px',
-              height: '100px',
-              background: 'white',
-              borderRadius: '10px',
-              marginLeft: "25px",
-              cursor: "pointer",
-              boxShadow: "rgb(128 128 128 / 20%) 8px 4px 30px 0px",
-            }} onClick={() => this.getLineGraphData("daily", "diesel")}>
-              <p style={{
-                textAlign: 'center',
-                color: '#888F9F',
-                fontFamily: 'Poppins-Regular'
-              }}>Diesel</p>
-              <p style={{
-                textAlign: 'center',
-                fontFamily: 'Poppins-Regular'
-              }}>{cardDet[1]}</p>
+            <div className='utilCard'
+              style={{marginLeft:"30px"}}
+              onClick={() => this.getLineGraphData("daily", "diesel")}>
+              <p className='utilCardText'>Diesel</p>
+              <p className='utilCardText'>{cardDet[1]}</p>
             </div>
 
-            <div style={{
-              width: '240px',
-              height: '100px',
-              background: 'white',
-              borderRadius: '10px',
-              marginLeft: "25px",
-              cursor: "pointer",
-              boxShadow: "rgb(128 128 128 / 20%) 8px 4px 30px 0px",
-            }} onClick={() => this.getLineGraphData("daily", "oil")}>
-              <p style={{
-                textAlign: 'center',
-                color: '#888F9F',
-                fontFamily: 'Poppins-Regular'
-              }}>Oil</p>
-              <p style={{
-                textAlign: 'center',
-                fontFamily: 'Poppins-Regular'
-              }}>{cardDet[2]}</p>
+            <div className='utilCard'
+              style={{ marginLeft: "30px" }}
+              onClick={() => this.getLineGraphData("daily", "oil")}>
+              <p className='utilCardText'>Oil</p>
+              <p className='utilCardText'>{cardDet[2]}</p>
             </div>
           </div>
 
-
-          <div id="graph_opt" style={{ display: "none" }}>
-            <div 
-              style={{ display: "flex", marginTop: "30px" }}>
+          <div id="graph_option"
+            style={{ marginTop: "30px", display: "none" }}>
+            <div>
               <button
                 id="daily"
                 className="heading"
@@ -537,33 +494,30 @@ export default class Utilize extends Component {
                 Monthly
               </button>
             </div>
-          </div>
-
-
-          {series.length !== 0 ? (
-            <div style={{ marginTop: "30px" }}>
-              <div>
-                <div id="chart">
-                  <div id="chart-timeline">
-                    {kpiName === "petrol" && (
-                      <ApexCharts options={this.state.optionsPetrol}
-                        series={series} type="area" height={450} />
-                    )}
-                    {kpiName === "diesel" && (
-                      <ApexCharts options={this.state.optionsDiesel}
-                        series={series} type="area" height={450} />
-                    )}
-                    {kpiName === "oil" && (
-                      <ApexCharts options={this.state.optionsOil}
-                        series={series} type="area" height={450} />
-                    )}
+            {series.length !== 0 ? (
+              <div style={{ marginTop: "30px" }}>
+                <div>
+                  <div id="chart">
+                    <div id="chart-timeline">
+                      {kpiName === "petrol" && (
+                        <ApexCharts options={this.state.optionsPetrol}
+                          series={series} type="area" height={450} />
+                      )}
+                      {kpiName === "diesel" && (
+                        <ApexCharts options={this.state.optionsDiesel}
+                          series={series} type="area" height={450} />
+                      )}
+                      {kpiName === "oil" && (
+                        <ApexCharts options={this.state.optionsOil}
+                          series={series} type="area" height={450} />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ) : (<p />)
-          }
-
+            ) : (<p />)
+            }
+          </div>
         </div>
 
         <div id="sessionModal" className="modal">

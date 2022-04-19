@@ -73,13 +73,11 @@ export default class Health extends Component {
         .then((response) => {
           if (response.status === 200 || response.status === 201) {
             $('#health').empty();
-            let data = response.data;
+            let data = response.data[0];
             if (data.length !== 0) {
               for (let i = 0; i < data.length; i++) {
-                let timestamp = data[i].lastseen.substr(0, 10) +
-                  " " +
-                  data[i].lastseen.substr(11, 8),
-                  status = 'red';
+                let timestamp = data[i].lastseen.substring(0, 19).replace("T", " "),
+                status = 'red';
                 if (new Date() - new Date(data[i].lastseen) <= 2 * 60 * 1000) {
                   status = "green";
                 }
