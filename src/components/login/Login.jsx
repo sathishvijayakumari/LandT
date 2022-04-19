@@ -24,8 +24,10 @@ export default class Login extends Component {
          let data = { username: username, password: password }
         axios({method:'POST',url:'/api/login',data:data})
         .then((res)=>{
-            if (res.status === 200 || res.status === 201) {
-                console.log('Successfully Login===>');
+            // console.log(res);
+            if (res.status === 200 ) {
+                // console.log('Response===>');
+
                 sessionStorage.setItem("login", "success");
                 this.props.parentCallback("success");
             }
@@ -53,11 +55,7 @@ export default class Login extends Component {
       const{username,password,message,error,success}=this.state;
     return (
         <>
-            <div style={{
-                margin: '0px',
-                background: 'linear-gradient(to right, #b3d1ff, #e6f0ff)',
-                position: 'absolute', width: '100%', height: '100%'
-            }} >
+       <div style={{margin:'0px',background:'linear-gradient(to right, #b3d1ff, #e6f0ff)',position:'absolute',width:'100%',height:'100%'}} >
             <div className='main_body' >
             
                 <img

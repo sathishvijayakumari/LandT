@@ -1,10 +1,5 @@
 import React, { Component } from 'react'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/login/Login';
 import Leftsidebar from "./components/leftsidebar/Leftsidebar";
 import Home from './components/pages/Home';
@@ -36,42 +31,28 @@ export default class App extends Component {
     if (status === "failed" || status === null) {
       return (
         <Router>
-          <Route path="/">
-            <Redirect to="/login"></Redirect>
-          </Route>
-          <Route
-            exact
-            path="/login"
-            render={(props) => (
-              <Login
-                title="Login"
-                {...props}
-                parentCallback={this.login}
-              ></Login>
-            )}
-          />
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route exact path="/login" element={<Login parentCallback={this.login} />} />
+          </Routes>
         </Router>
       )
-    } else {
+    }
+    else {
       return (
         <Router>
           <Leftsidebar />
-          <Switch>
-            <Route exact path="/">
-              <Redirect to="/home"></Redirect>
-            </Route>
-            <Route exact path="/login">
-              <Redirect to="/home"></Redirect>
-            </Route>
-            <Route exact path="/home" component={Realtime} />
-            <Route exact path="/register" component={Registration} />
-            <Route exact path="/realtime" component={Realtime} />
-            <Route exact path="/health" component={Health} />
-            <Route exact path="/alerts" component={Alerts} />
-            <Route exact path="/utilization" component={Utilize} />
-          </Switch>
+          <Routes>
+            <Route path="/login" element={<Navigate to="/home" />} />
+            <Route exact path="/home" element={<Home />} />
+            <Route exact path="/realtime" element={<Realtime />} />
+            <Route exact path="/health" element={<Health />} />
+            <Route exact path="/alerts" element={<Alerts />} />
+            <Route exact path="/register" element={<Registration />} />
+            <Route exact path="/utilization" element={<Utilize />} />
+          </Routes>
         </Router>
-      )
+      );
     }
   }
 }

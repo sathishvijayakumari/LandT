@@ -63,7 +63,7 @@ export default class Employeereg extends Component {
                 }
             }).catch((error) => { // console.log(error);
                 if (error.response.status === 403) {
-                    $("#config_displayModal").css("display", "block");
+                    $("#sessionModal").css("display", "block");
                     $("#content").text("User Session has timed out. Please Login again");
                 }
 
@@ -77,10 +77,11 @@ export default class Employeereg extends Component {
 
 
     hide = () => {
-        document.getElementById("deletetag").style.display = $("#deletetag").css("display") === 'block' ? 'none' : 'block'
+        document.getElementById("deletetag").style.display =
+            $("#deletetag").css("display") === 'block' ? 'none' : 'block'
     }
     sessionTimeout = () => {
-        $("#config_displayModal").css("display", "none");
+        $("#sessionModal").css("display", "none");
         sessionStorage.removeItem('login')
         window.location.pathname = '/login'
     };
@@ -238,14 +239,14 @@ export default class Employeereg extends Component {
                         </div>
                     </form>
                 </div>
-                <div id="config_displayModal" className="modal">
+                <div id="sessionModal" className="modal">
                     <div className="modal-content">
-                        <p id="content" style={{ textAlign: "center" }}></p>
+                        <p id="content"
+                            style={{ textAlign: "center" }}></p>
                         <button
-                            id="ok"
+                            id="okBtn"
                             className="btn-center btn success-btn"
-                            onClick={this.sessionTimeout}
-                        >
+                            onClick={this.sessionTimeout}>
                             OK
                         </button>
                     </div>

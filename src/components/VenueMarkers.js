@@ -1,49 +1,55 @@
 import React, { Fragment } from 'react'
 import { Marker } from 'react-leaflet';
-import { VenueLocationIcon1, VenueLocationIcon2, VenueLocationIcon3 } from './VenueLocationIcon';
 import MarkerPopup from './MarkerPopup';
 
+import employee from "../assets/emp_location_icon.svg";
+import asset from '../assets/asset_location_icon.svg';
+import pulse from '../assets/pulse_location_icon.svg';
+import { Icon } from 'leaflet'
+const empIcon = new Icon({
+  iconUrl: employee,
+  iconSize: [32, 32]
+})
+const assetIcon = new Icon({
+  iconUrl: asset,
+  iconSize: [32, 32]
+})
+const pulseIcon = new Icon({
+  iconUrl: pulse,
+  iconSize: [32, 32]
+})
+
 const VenueMarkers = (props) => {
-  const { venues, search } = props;
-  console.log(search, "VenueMarker ========>", venues);
+  const { venues} = props;
+  console.log("VenueMarker ========>", venues);
   const markers = venues.map(function (venue, index) {
-    // if (search === "all") {
-    if (venue.value === 1) {
+    if (venue.value.length !== 0) {
       return (
         <Marker key={index}
           position={[venue.lat, venue.lan]}
-          icon={VenueLocationIcon3} >
+          icon={pulseIcon} >
           <MarkerPopup data={venue} />
         </Marker>
       )
     }
-    if (venue.type === 1) {
+    else if (venue.type === 1 && venue.value.length === 0) {
       return (
         <Marker key={index}
           position={[venue.lat, venue.lan]}
-          icon={VenueLocationIcon1} >
+          icon={empIcon} >
           <MarkerPopup data={venue} />
         </Marker>
       )
-    } else if (venue.type === 2) {
+    } else if (venue.type === 2 && venue.value.length === 0) {
       return (
         <Marker key={index}
           position={[venue.lat, venue.lan]}
-          icon={VenueLocationIcon2} >
+          icon={assetIcon} >
           <MarkerPopup data={venue} />
         </Marker>
       )
     }
-    // }
-    // else if (search === "searching") {
-    //   return (
-    //     <Marker key={index}
-    //       position={[venue.lat, venue.lan]}
-    //       icon={VenueLocationIcon2} >
-    //       <MarkerPopup data={venue} />
-    //     </Marker>
-    //   )
-    // }
+
   }.bind(this));
 
   return <Fragment>{markers}</Fragment>

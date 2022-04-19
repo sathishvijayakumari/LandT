@@ -10,12 +10,11 @@ export default class Registration extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // flag: false,
+      flag: false,
     }
   }
   componentDidMount() {
     sidelinkClicked('option1')
-    sessionStorage.setItem("sidelink", "option1");
     this.setState({ flag: true })
     this.List[0] = true;
     $("#opt0").css({ "background": "#00629bed", "color": "white" });
@@ -32,73 +31,70 @@ export default class Registration extends Component {
     this.List[id] = true;
   }
   sessionTimeout = () => {
-    $("#config_displayModal").css("display", "none");
+    $("#sessionModal").css("display", "none");
     sessionStorage.removeItem('login')
     window.location.pathname = '/login'
   };
   render() {
     return (
-      <>
-        <div className='maindiv'>
-          <div style={{ marginLeft: '35px' }}>
-            <h1 style={{ color: '#0000008f' }}>Registration</h1>
-            <div style={{
-              width: '50px', height: '5px', background: '#00629B',
-              marginTop: '-18px', borderRadius: '5px', marginBottom: '30px'
-            }}>
-            </div>
-            <div className="container fading"
-              style={{
-                marginTop: "30px"
-
-              }}>
-              <div className="row"
-                onClick={this.optionChange}>
-                <button
-                  id="opt0"
-                  className='navbtn'
-                >
-                  Employee Registration
-                </button>
-                <button
-                  id="opt1"
-                  className='navbtn'
-                >
-                  Asset Registration
-                </button>
-                <button
-                  id="opt2"
-                  className='navbtn'
-                >
-                  Utilization Registration
-                </button>
-              </div>
-              <div
-                className="container"
-                id="childComponent"
-              >
-                {this.List[0] && (<Employeereg />)}
-                {this.List[1] && (<Assetreg />)}
-                {this.List[2] && (<Utilizereg />)}
-
-              </div>
-            </div>
+      <div className='maindiv'>
+        <div style={{ marginLeft: '35px' }}>
+          <h1 style={{ color: '#0000008f' }}>Registration</h1>
+          <div style={{
+            width: '50px', height: '5px', background: '#00629B',
+            marginTop: '-18px', borderRadius: '5px', marginBottom: '30px'
+          }}>
           </div>
-          <div id="config_displayModal" className="modal">
-            <div className="modal-content">
-              <p id="content" style={{ textAlign: "center" }}></p>
+          <div className="container fading"
+            style={{
+              marginTop: "30px"
+
+            }}>
+            <div className="row"
+              onClick={this.optionChange}>
               <button
-                id="ok"
-                className="btn-center btn success-btn"
-                onClick={this.sessionTimeout}
+                id="opt0"
+                className='navbtn'
               >
-                OK
+                Employee Registration
               </button>
+              <button
+                id="opt1"
+                className='navbtn'
+              >
+                Asset Registration
+              </button>
+              <button
+                id="opt2"
+                className='navbtn'
+              >
+                Utilization Registration
+              </button>
+            </div>
+            <div
+              className="container"
+              id="childComponent"
+            >
+              {this.List[0] && (<Employeereg />)}
+              {this.List[1] && (<Assetreg />)}
+              {this.List[2] && (<Utilizereg />)}
+
             </div>
           </div>
         </div>
-
-      </>
+        <div id="sessionModal" className="modal">
+          <div className="modal-content">
+            <p id="content"
+              style={{ textAlign: "center" }}></p>
+            <button
+              id="okBtn"
+              className="btn-center btn success-btn"
+              onClick={this.sessionTimeout}>
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
     )
   }
 }

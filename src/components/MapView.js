@@ -4,10 +4,11 @@ import {
   Polyline,
 } from 'react-leaflet';
 
-import 'leaflet/dist/leaflet.css';
+import "leaflet/dist/leaflet.css";
 import Markers from './VenueMarkers';
 import axios from "axios";
 import $ from "jquery";
+
 
 const multiPolyline = [
   [
@@ -79,24 +80,38 @@ class MapView extends Component {
       currentLocation: { lat: 12.9311, lng: 77.6232 },
       zoom: 19,
       res_data: [],
-      search: "",
     }
   }
 
   componentDidMount() {
+    this.trackingInterval("");
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval1);
+    clearInterval(this.interval2);
+  }
+
+  trackingInterval = (tagHide) => {
+    if (tagHide === "clear") {
+      $("#tagid").val("");
+    }
     this.trackingAllData();
+    this.interval1 = setInterval(() => {
+      this.trackingAllData();
+    }, 15 * 1000)
   }
 
   trackingAllData = () => {
-    this.setState({ res_data: [], search: "" });
-    $("#tagid").val("");
+    this.setState({ res_data: [] });
+    clearInterval(this.interval2);
     axios({ method: "GET", url: "/api/tracking" })
       .then((res) => {
         if (res.status === 200 || res.status === 201) {
           console.log("===----==>", res);
           let data = res.data;
           if (data.length > 0) {
-            this.setState({ res_data: data, search: "all"})
+            this.setState({ res_data: data })
           } else {
             this.props.search("No data Found.");
           }
@@ -116,24 +131,32 @@ class MapView extends Component {
       })
   }
 
+  locationSearchInt = () => {
+    this.locationSearch();
+    this.interval2 = setInterval(() => {
+      this.locationSearch();
+    }, 15 * 1000)
+  }
+
   locationSearch = () => {
-    this.setState({ res_data: [], search: ""})
+    clearInterval(this.interval1);
     let tagid = $("#tagid").val();
     if (tagid.length !== 0) {
       if (!tagid.match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
         this.props.search("Invalid Asset ID");
       } else {
+        this.setState({ res_data: [] });
         axios({ method: "POST", url: "/api/tracking", data: { tagid: tagid } })
           .then((res) => {
             if (res.status === 200 || res.status === 201) {
               console.log("locationSearch===----==>", res);
               let data = res.data;
               if (data.length !== 0) {
-                this.setState({ res_data: data, search:"searching" })
+                this.setState({ res_data: data })
               } else {
                 this.props.search("No data Found.");
               }
-             
+
             }
           })
           .catch((error) => {
@@ -154,8 +177,14 @@ class MapView extends Component {
     }
   }
 
+  sessionTimeout = () => {
+    $("#sessionModal").css("display", "none");
+    sessionStorage.removeItem('login')
+    window.location.pathname = '/login'
+  };
+
   render() {
-    const { currentLocation, zoom, res_data, search } = this.state;
+    const { currentLocation, zoom, res_data } = this.state;
     return (
       <div style={{ marginLeft: '35px' }}>
         <div className="inputdiv" style={{ margin: "-20px 0px 20px 0px", display: "flex" }}>
@@ -167,7 +196,7 @@ class MapView extends Component {
             required="required" />
 
           <i className="far fa-search"
-            onClick={this.locationSearch}
+            onClick={this.locationSearchInt}
             style={{
               cursor: "pointer",
               fontSize: '26px',
@@ -178,7 +207,7 @@ class MapView extends Component {
           </i>
 
           <div
-            onClick={this.trackingAllData}
+            onClick={() => this.trackingInterval("clear")}
             style={{
               marginLeft: "30px",
               width: "90px",
@@ -189,16 +218,56 @@ class MapView extends Component {
             }} >
             <p
               style={{
+                cursor: "pointer",
                 color: "#FFF",
                 fontSize: "18px",
                 position: "absolute",
-                top: "-10px",
+                top: "-14px",
                 marginLeft: "24px"
               }}>Clear</p>
           </div>
         </div>
+
+        <div style={{ marginTop: "15px", display: "flex", marginBottom:"15px" }}>
+          <div style={{ display: "flex" }}>
+            <div>
+              <i className="fas fa-map-marker-alt"
+                style={{
+                  fontSize: '20px',
+                  marginRight: '5px',
+                  marginTop: "2px",
+                  color: '#007acc'
+                }}></i>
+              <span style={{ fontSize: "17px" }}>Employee Tag</span>
+            </div>
+
+            <div style={{marginLeft: "15px"}}>
+              <i className="fas fa-map-marker-alt"
+                style={{
+                  fontSize: '20px',
+                  marginRight: '5px',
+                  marginTop: "2px",
+                  color: '#9933ff'
+                }}></i>
+              <span style={{ fontSize: "17px" }}>Asset Tag</span>
+            </div>
+
+            <div style={{ marginLeft: "15px" }}>
+              <i className="fas fa-map-marker-alt"
+                style={{
+                  fontSize: '20px',
+                  marginRight: '5px',
+                  marginTop: "2px",
+                  color: '#F00'
+                }}></i>
+              <span style={{ fontSize: "17px" }}>Panic Tag</span>
+            </div>
+          </div>
+        </div>
+
+
         <Map
-          scrollWheelZoom={false}
+          scrollWheelZoom={true}
           center={currentLocation}
           zoom={zoom}
           // minZoom={14}
@@ -208,11 +277,24 @@ class MapView extends Component {
           <TileLayer url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}" />
           {
             res_data.length > 0 && (
-              <Markers search = {search} venues={res_data} />
+              <Markers venues={res_data} />
             )
           }
           <Polyline color='lime' positions={multiPolyline} />
         </Map>
+
+        <div id="sessionModal" className="modal">
+          <div className="modal-content">
+            <p id="content"
+              style={{ textAlign: "center" }}></p>
+            <button
+              id="okBtn"
+              className="btn-center btn success-btn"
+              onClick={this.sessionTimeout}>
+              OK
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

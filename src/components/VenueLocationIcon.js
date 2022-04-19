@@ -24,8 +24,8 @@ export const VenueLocationIcon2 = L.icon({
 });
 
 export const VenueLocationIcon3 = L.icon({
-  iconUrl: require('../assets/pulse_location_icon.svg'),
-  iconRetinaUrl: require('../assets/pulse_location_icon.svg'),
+  iconUrl: require('../assets/test01_location_icon.svg'),
+  iconRetinaUrl: require('../assets/test01_location_icon.svg'),
   iconAnchor: null,
   shadowUrl: null,
   shadowSize: null,

@@ -16,7 +16,6 @@ export default class Assetreg extends Component {
         let data = {
             name: $('#assetname').val(),
             tagid: $('#assetid').val(),
-
         }
         if (!$("#assetid").val().match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
             this.setState({ error: true, message: 'Invalid Asset ID' })
@@ -34,7 +33,7 @@ export default class Assetreg extends Component {
                 }).catch((error) => {
                     console.log(error);
                     if (error.response.status === 403) {
-                        $("#config_displayModal").css("display", "block");
+                        $("#sessionModal").css("display", "block");
                         $("#content").text("User Session has timed out. Please Login again");
                     } else if (error.response.status === 400) {
                         this.setState({ error: true, message: 'Bad Request!' })
@@ -50,24 +49,21 @@ export default class Assetreg extends Component {
         let data = {
             tagid: $('#id').val()
         }
-
         if (!$("#id").val().match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
             this.setState({ error: true, message: 'Invalid Tag ID' })
         }
         else if ($('#id').val() !== '') {
-
             axios({ method: 'DELETE', url: '/api/asset/registration', data: data }).then((response) => {
                 if (response.status === 200 || response.status === 201) {
                     this.setState({ success: true, message: 'Asset Tag Removed Successfullyy' })
                     $('#id').val('');
                     $('#deletetag').hide();
                 }
-            }).catch((error) => { // console.log(error);
+            }).catch((error) => {
                 if (error.response.status === 403) {
-                    $("#config_displayModal").css("display", "block");
+                    $("#sessionModal").css("display", "block");
                     $("#content").text("User Session has timed out. Please Login again");
                 }
-
             })
         }
         else {
@@ -75,20 +71,21 @@ export default class Assetreg extends Component {
         }
     }
     hide = () => {
-        document.getElementById("deletetag").style.display = $("#deletetag").css("display") === 'block' ? 'none' : 'block'
+        document.getElementById("deletetag").style.display =
+            $("#deletetag").css("display") === 'block' ? 'none' : 'block'
     }
     componentDidUpdate() {
         setTimeout(() => this.setState({ message: '', message1: '' }), 3000);
     }
     sessionTimeout = () => {
-        $("#config_displayModal").css("display", "none");
+        $("#sessionModal").css("display", "none");
         sessionStorage.removeItem('login')
         window.location.pathname = '/login'
     };
     render() {
         const { message, error, success } = this.state;
         return (
-            <div>
+            <div >
                 <div style={{ textAlign: 'center', paddingTop: '10px' }}>
                     {error && (
                         <div style={{ color: 'red' }}>
@@ -119,11 +116,6 @@ export default class Assetreg extends Component {
                         <span className="label">Mac ID :</span>
                         <input type="text" name="assetid" id="assetid" required="required" placeholder='5a-c2-15-01-00-00' />
                     </div>
-
-                    {/* <div className="inputdiv">
-                            <span className="label">Shop Floor :</span>
-                            <input type="text" name="flooor" id="floor" required="required"/>
-                        </div> */}
                     <form id="empreg">
                         <div style={
                             {
@@ -231,14 +223,14 @@ export default class Assetreg extends Component {
                         </div>
                     </form>
                 </div>
-                <div id="config_displayModal" className="modal">
+                <div id="sessionModal" className="modal">
                     <div className="modal-content">
-                        <p id="content" style={{ textAlign: "center" }}></p>
+                        <p id="content"
+                            style={{ textAlign: "center" }}></p>
                         <button
-                            id="ok"
+                            id="okBtn"
                             className="btn-center btn success-btn"
-                            onClick={this.sessionTimeout}
-                        >
+                            onClick={this.sessionTimeout}>
                             OK
                         </button>
                     </div>
