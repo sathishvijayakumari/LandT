@@ -232,11 +232,26 @@ export default class Utilize extends Component {
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           let data = response.data;
+          console.log(data, '=========')
+
           if (data.length !== 0) {
             for (let i = 0; i < data.length; i++) {
               $("#assetId").append(
                 "<option id=" + data[i].id + ">" + data[i].tagid + "</option>"
               );
+
+              let timestamp = data[i].lastseen.substr(0, 10) +
+                " " +
+                data[i].lastseen.substr(11, 8);
+              console.log(timestamp);
+              if (new Date() - new Date(data[i].lastseen) <= 2 * 60 * 1000) {
+                console.log('==============')
+                $('#statuscolor').css('background', '#80ff80');
+                $('#statustext').html('ON');
+              } else {
+                $('#statuscolor').css('background', '#ffb3b3');
+                $('#statustext').html('OFF');
+              }
             }
             this.getAssetsAllDetails(data[0].tagid);
           }
@@ -301,6 +316,7 @@ export default class Utilize extends Component {
       message: "", error: false,
       success: false, kpiName: ""
     });
+
     this.setState({ series: [] });
     axios({
       method: 'POST', url: "/api/utilization/report",
@@ -329,18 +345,20 @@ export default class Utilize extends Component {
             }
             this.setState({ series: [{ name: kpiname, data: value }], kpiName: kpiname })
           } else {
-            this.setState({ error: true, message: 'No ' + kpiname + ' data found.' })
+            this.setState({ error: true, message: 'No Data found.' })
+            $('#graph_option').empty();
           }
         }
       })
       .catch((error) => {
         console.log("Error===>", error);
         if (error.response.status === 403) {
-          this.setState({ error: true, message: 'Please Login Again' })
+          $("#sessionModal").css("display", "block");
+          $("#content").text("User Session has timed out. Please Login again");
         } else if (error.response.status === 400) {
-          this.setState({ error: true, message: 'Bad request!' })
+          this.setState({ error: true, message: 'No data found.' })
         } else if (error.response.status === 404) {
-          this.setState({ error: true, message: 'No Petrol data found.' })
+          this.setState({ error: true, message: 'No data found.' })
         }
       })
   }
@@ -446,23 +464,34 @@ export default class Utilize extends Component {
           <div id="kpi_cards"
             style={{ display: "flex", marginTop: "30px" }}>
             <div className='utilCard'
+              // style={{ background: '#ffd6cc' }}
               onClick={() => this.getLineGraphData("daily", "petrol")}>
-              <p className='utilCardText'>Petrol</p>
+              <p className='utilCardText'>Fuel(l)</p>
               <p className='utilCardText'>{cardDet[0]}</p>
-            </div>
-
-            <div className='utilCard'
-              style={{marginLeft:"30px"}}
-              onClick={() => this.getLineGraphData("daily", "diesel")}>
-              <p className='utilCardText'>Diesel</p>
-              <p className='utilCardText'>{cardDet[1]}</p>
             </div>
 
             <div className='utilCard'
               style={{ marginLeft: "30px" }}
               onClick={() => this.getLineGraphData("daily", "oil")}>
-              <p className='utilCardText'>Oil</p>
+              <p className='utilCardText'>Oil(l)</p>
+              <p className='utilCardText'>{cardDet[1]}</p>
+            </div>
+
+            <div className='utilCard'
+              style={{ marginLeft: "30px" }}
+              onClick={() => this.getLineGraphData("daily", "diesel")}>
+              <p className='utilCardText'>Active Load(t)</p>
+
               <p className='utilCardText'>{cardDet[2]}</p>
+            </div>
+
+            <div className='utilCard'
+              style={{ marginLeft: "30px" }}
+              // onClick={() => this.getLineGraphData("daily", "diesel")}
+            >
+              <p className='utilCardText'>Health Status</p>
+
+              <p className='utilCardText'>34</p>
             </div>
           </div>
 
@@ -473,7 +502,8 @@ export default class Utilize extends Component {
                 id="daily"
                 className="heading"
                 style={graphBtn}
-                onClick={() => this.getLineGraphData("daily", kpiName)}
+                // onClick={() => this.getLineGraphData("daily", kpiName)}
+                onClick={() => this.getLineGraphData("daily", "petrol")}
               >
                 Daily
               </button>

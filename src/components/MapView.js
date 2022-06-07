@@ -73,13 +73,29 @@ const multiPolyline = [
   ]
 ]
 
+const graphBtn = {
+  width: '90px',
+  height: '35px',
+  border: "none",
+  marginLeft: "15px",
+  borderRadius: "4px",
+  fontSize: "16px",
+  cursor: "pointer",
+  color: "Black",
+  fontWeight: "bold",
+  boxShadow: "3px 3px 5px 3px rgba(0, 0, 0, 0.25)",
+};
+
+
 class MapView extends Component {
   constructor(props) {
     super(props);
     this.state = {
       currentLocation: { lat: 12.9311, lng: 77.6232 },
       zoom: 19,
+      trackType: "gps",
       res_data: [],
+      count: [0, 0, 0, 0],
     }
   }
 
@@ -92,26 +108,89 @@ class MapView extends Component {
     clearInterval(this.interval2);
   }
 
+  optionChange = (btnId) => {
+    $("#gps").css({ background: "none", color: "#000" });
+    $("#ips").css({ background: "none", color: "#000" });
+    $("#" + btnId).css({ background: "rgb(0, 98, 135)", color: "#FFF" });
+  };
+
+
   trackingInterval = (tagHide) => {
     if (tagHide === "clear") {
       $("#tagid").val("");
+      clearInterval(this.interval1);
     }
-    this.trackingAllData();
+    this.getGpsIpsData("gps");
     this.interval1 = setInterval(() => {
-      this.trackingAllData();
-    }, 15 * 1000)
+      this.getGpsIpsData(this.state.trackType);
+    }, 5 * 1000)
   }
 
-  trackingAllData = () => {
-    this.setState({ res_data: [] });
+  // trackingAllData = () => {
+  //   this.setState({ res_data: [], count: [0, 0, 0, 0] });
+  //   clearInterval(this.interval2);
+  //   axios({ method: "GET", url: "/api/tracking" })
+  //     .then((res) => {
+  //       if (res.status === 200 || res.status === 201) {
+  //         console.log("===----==>", res);
+  //         let data = res.data;
+  //         let emp = 0, ass = 0, pan = 0, free = 0;
+  //         for (let i = 0; i < data.length; i++) {
+  //           if (data[i].value === 1) {
+  //             pan += 1;
+  //           } else if (data[i].value === 3) {
+  //             free += 1;
+  //           } else if (data[i].type === 1 && data[i].value.length === 0) {
+  //             emp += 1;
+  //           } else if (data[i].type === 2 && data[i].value.length === 0) {
+  //             ass += 1;
+  //           } 
+  //         }
+  //         console.log("------->", [emp, ass, pan, free]);
+  //         if (data.length > 0) {
+  //           this.setState({ res_data: data, count: [emp, ass, pan, free] });
+  //         } else {
+  //           this.props.search("No data Found.");
+  //         }
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log("=====>", error);
+  //       let errorStaus = "";
+  //       if (error.response.status === 403) {
+  //         errorStaus = "User Session has timed out. Please Login again"
+  //       } else if (error.response.status === 400) {
+  //         errorStaus = "Bad Request!";
+  //       } else if (error.response.status === 404) {
+  //         errorStaus = "No data Found.";
+  //       }
+  //       this.props.search(errorStaus);
+  //     })
+  // }
+
+  getGpsIpsData = (type) => {
+    this.optionChange(type);
+    this.setState({ trackType: type, res_data: [], count: [0, 0, 0, 0] });
     clearInterval(this.interval2);
-    axios({ method: "GET", url: "/api/tracking" })
+    axios({ method: "POST", url: "/api/tracking/gps/ips", data: { key: type } })
       .then((res) => {
         if (res.status === 200 || res.status === 201) {
           console.log("===----==>", res);
           let data = res.data;
+          let emp = 0, ass = 0, pan = 0, free = 0;
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].value === 1) {
+              pan += 1;
+            } else if (data[i].value === 3) {
+              free += 1;
+            } else if (data[i].type === 1 && data[i].value.length === 0) {
+              emp += 1;
+            } else if (data[i].type === 2 && data[i].value.length === 0) {
+              ass += 1;
+            }
+          }
           if (data.length > 0) {
-            this.setState({ res_data: data })
+            this.setState({ res_data: data, count: [emp, ass, pan, free] });
           } else {
             this.props.search("No data Found.");
           }
@@ -135,7 +214,7 @@ class MapView extends Component {
     this.locationSearch();
     this.interval2 = setInterval(() => {
       this.locationSearch();
-    }, 15 * 1000)
+    }, 5 * 1000)
   }
 
   locationSearch = () => {
@@ -184,7 +263,7 @@ class MapView extends Component {
   };
 
   render() {
-    const { currentLocation, zoom, res_data } = this.state;
+    const { currentLocation, zoom, res_data, count } = this.state;
     return (
       <div style={{ marginLeft: '35px' }}>
         <div className="inputdiv" style={{ margin: "-20px 0px 20px 0px", display: "flex" }}>
@@ -213,7 +292,7 @@ class MapView extends Component {
               width: "90px",
               height: "35px",
               position: "relative",
-              background: "#00629B",
+              background: "#d1000099",
               borderRadius: "5px"
             }} >
             <p
@@ -226,9 +305,33 @@ class MapView extends Component {
                 marginLeft: "24px"
               }}>Clear</p>
           </div>
+
+          <div style={{
+            marginTop: "-10px",
+            marginLeft: "20px",
+            position: "absolute",
+            right: "45px"
+          }}>
+            <button
+              id="gps"
+              className="heading"
+              style={graphBtn}
+              onClick={() => this.getGpsIpsData("gps")}
+            >
+              GPS
+            </button>
+            <button
+              id="ips"
+              className="heading"
+              style={graphBtn}
+              onClick={() => this.getGpsIpsData("ips")}
+            >
+              IPS
+            </button>
+          </div>
         </div>
 
-        <div style={{ marginTop: "15px", display: "flex", marginBottom:"15px" }}>
+        <div style={{ marginTop: "15px", display: "flex", marginBottom: "15px" }}>
           <div style={{ display: "flex" }}>
             <div>
               <i className="fas fa-map-marker-alt"
@@ -238,10 +341,10 @@ class MapView extends Component {
                   marginTop: "2px",
                   color: '#007acc'
                 }}></i>
-              <span style={{ fontSize: "17px" }}>Employee Tag</span>
+              <span style={{ fontSize: "17px" }}>Employee Tag({count[0]})</span>
             </div>
 
-            <div style={{marginLeft: "15px"}}>
+            <div style={{ marginLeft: "15px" }}>
               <i className="fas fa-map-marker-alt"
                 style={{
                   fontSize: '20px',
@@ -249,7 +352,7 @@ class MapView extends Component {
                   marginTop: "2px",
                   color: '#9933ff'
                 }}></i>
-              <span style={{ fontSize: "17px" }}>Asset Tag</span>
+              <span style={{ fontSize: "17px" }}>Asset Tag({count[1]})</span>
             </div>
 
             <div style={{ marginLeft: "15px" }}>
@@ -260,7 +363,29 @@ class MapView extends Component {
                   marginTop: "2px",
                   color: '#F00'
                 }}></i>
-              <span style={{ fontSize: "17px" }}>Panic Tag</span>
+              <span style={{ fontSize: "17px" }}>Panic ({count[2]})</span>
+            </div>
+
+            <div style={{ marginLeft: "15px" }}>
+              <i className="fas fa-map-marker-alt"
+                style={{
+                  fontSize: '20px',
+                  marginRight: '5px',
+                  marginTop: "2px",
+                  color: '#ff9900'
+                }}></i>
+              <span style={{ fontSize: "17px" }}>Falldown({count[3]})</span>
+            </div>
+
+            <div style={{ marginLeft: "15px" }}>
+              <i className="fas fa-map-marker-alt"
+                style={{
+                  fontSize: '20px',
+                  marginRight: '5px',
+                  marginTop: "2px",
+                  color: '#800080'
+                }}></i>
+              <span style={{ fontSize: "17px" }}>Inactive</span>
             </div>
           </div>
         </div>
@@ -295,7 +420,7 @@ class MapView extends Component {
             </button>
           </div>
         </div>
-      </div>
+      </div >
     );
   }
 }

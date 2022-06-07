@@ -8,6 +8,7 @@ export default class Assetreg extends Component {
         super();
         this.state = {
             message: '',
+            message1:'',
             success: false,
             error: false,
         }
@@ -29,6 +30,10 @@ export default class Assetreg extends Component {
                         $('#assetname').val('');
                     } else if (response.status === 406) {
                         this.setState({ success: true, message1: response.data.message })
+                    } else if (response.status === 208) {
+                        this.setState({ success: true, message1: 'Already Exist!' })
+                        $('#assetid').val('');
+                        $('#assetname').val('');
                     }
                 }).catch((error) => {
                     console.log(error);
@@ -55,7 +60,7 @@ export default class Assetreg extends Component {
         else if ($('#id').val() !== '') {
             axios({ method: 'DELETE', url: '/api/asset/registration', data: data }).then((response) => {
                 if (response.status === 200 || response.status === 201) {
-                    this.setState({ success: true, message: 'Asset Tag Removed Successfullyy' })
+                    this.setState({ success: true, message1: 'Asset Tag Removed Successfullyy' })
                     $('#id').val('');
                     $('#deletetag').hide();
                 }
@@ -63,6 +68,8 @@ export default class Assetreg extends Component {
                 if (error.response.status === 403) {
                     $("#sessionModal").css("display", "block");
                     $("#content").text("User Session has timed out. Please Login again");
+                } else if (error.response.status === 404) {
+                    this.setState({ error: true, message: 'Not Foound!' })
                 }
             })
         }
@@ -83,7 +90,7 @@ export default class Assetreg extends Component {
         window.location.pathname = '/login'
     };
     render() {
-        const { message, error, success } = this.state;
+        const { message, error, success,message1 } = this.state;
         return (
             <div >
                 <div style={{ textAlign: 'center', paddingTop: '10px' }}>
@@ -96,6 +103,11 @@ export default class Assetreg extends Component {
                     {success && (
                         <div style={{ color: 'green', }}>
                             <strong>{message}</strong>
+                        </div>
+                    )}
+                    {success && (
+                        <div style={{ color: 'red', }}>
+                            <strong>{message1}</strong>
                         </div>
                     )}
                 </div>

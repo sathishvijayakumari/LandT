@@ -6,14 +6,17 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
+    "animate.css": "^4.1.1",
     "apexcharts": "^3.35.0",
     "axios": "^0.26.1",
+    "emailjs-com": "^3.2.0",
     "jquery": "^3.6.0",
-    "react": "^16.11.0",
     "leaflet": "^1.5.1",
+    "react": "^16.11.0",
     "react-apexcharts": "^1.4.0",
     "react-dom": "^16.11.0",
     "react-leaflet": "^2.5.0",
+    "react-notifications-component": "^3.4.1",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.0",
     "web-vitals": "^2.1.4"
@@ -42,5 +45,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://192.168.0.73:8001"
+  "proxy": "http://192.168.0.78:8002"
 }

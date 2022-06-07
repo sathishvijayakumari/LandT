@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.6c134d45.css",
+    "main.js": "/static/js/main.67d00e15.js",
+    "static/js/787.107973e5.chunk.js": "/static/js/787.107973e5.chunk.js",
+    "static/media/Poppins-Thin.ttf": "/static/media/Poppins-Thin.59ff6a729e30c99b478e.ttf",
+    "static/media/Poppins-Light.ttf": "/static/media/Poppins-Light.7641a0f76ca9ef6c252c.ttf",
+    "static/media/Poppins-Regular.ttf": "/static/media/Poppins-Regular.35d26b781dc5fda684cc.ttf",
+    "static/media/Poppins-Medium.ttf": "/static/media/Poppins-Medium.673ed42382ab264e0bf5.ttf",
+    "static/media/Poppins-SemiBold.ttf": "/static/media/Poppins-SemiBold.ac8d04b620e54be9b0f0.ttf",
+    "static/media/Poppins-Bold.ttf": "/static/media/Poppins-Bold.cdb29a5d7ccf57ff05a3.ttf",
+    "static/media/pulse_location_icon.svg": "/static/media/pulse_location_icon.647f115068ec96f2a3cc3f7381174568.svg",
+    "static/media/asset_location_icon.svg": "/static/media/asset_location_icon.c0b4775dfa304d8da46751ff256f2974.svg",
+    "static/media/freefall_location_icon.svg": "/static/media/freefall_location_icon.f48425158462693f2458e4d77e4f559d.svg",
+    "static/media/emp_location_icon.svg": "/static/media/emp_location_icon.67784c270a9759ca7fcfb3c44f01c27e.svg",
+    "index.html": "/index.html",
+    "main.6c134d45.css.map": "/static/css/main.6c134d45.css.map",
+    "main.67d00e15.js.map": "/static/js/main.67d00e15.js.map",
+    "787.107973e5.chunk.js.map": "/static/js/787.107973e5.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6c134d45.css",
+    "static/js/main.67d00e15.js"
+  ]
+}

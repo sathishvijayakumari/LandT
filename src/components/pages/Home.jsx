@@ -1,9 +1,14 @@
 import axios from 'axios';
 import React, { Component } from 'react'
-import Chart from 'react-apexcharts'
 import { Link } from 'react-router-dom';
 import $ from 'jquery';
+import Chart from 'react-apexcharts'
 import ApexCharts from 'react-apexcharts';
+import { ReactNotifications } from 'react-notifications-component';
+import { Store } from 'react-notifications-component';
+
+import 'animate.css/animate.compat.css';
+import 'react-notifications-component/dist/theme.css';
 
 export default class Home extends Component {
     constructor(props) {
@@ -81,14 +86,20 @@ export default class Home extends Component {
     componentDidMount() {
         this.pieChartData();
         this.alertHistory();
+        // this.customNotification();
         this.interval = setInterval(() => {
             this.pieChartData();
             this.alertHistory();
         }, 10 * 1000)
+
+        // this.interval1 = setInterval(() => {
+        //     this.customNotification();
+        // }, 3 * 1000)
     }
 
     componentWillUnmount() {
         clearInterval(this.interval);
+        clearInterval(this.interval1);
     }
 
     alertHistory = () => {
@@ -157,6 +168,19 @@ export default class Home extends Component {
         sessionStorage.removeItem('login');
         window.location.pathname = '/login';
     };
+    // customNotification = () => {
+    //     console.log("======>------->");
+    //     Store.addNotification({
+    //         title: "Title",
+    //         message: "Hello !!!",
+    //         type: "info",
+    //         insert: "top",
+    //         container: "top-right",
+    //         animationIn: ["animated", "zoomIn"],
+    //         animationOut: ["animated", "zoomOut"],
+           
+    //     });
+    // }
     render() {
         const {
             series1,
@@ -165,316 +189,318 @@ export default class Home extends Component {
             series,
         } = this.state;
         return (
-            <div className='maindiv'>
-                <div style={{ marginLeft: '35px' }}>
-                    <h1 style={{
-                        marginTop: '15px',
-                        color: '#0000008f'
-                    }}>Overview</h1>
+            <>
+                {/*<ReactNotifications />*/}
+                <div className='maindiv'>
+                    <div style={{ marginLeft: '35px' }}>
+                        <h1 style={{
+                            marginTop: '15px',
+                            color: '#0000008f'
+                        }}>Overview</h1>
 
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        width: "765px"
-                    }}>
-                        <div style={{
-                            width: '240px',
-                            height: '260px',
-                            background: 'white',
-                            borderRadius: '10px',
-                            boxShadow: "rgb(128 128 128 / 20%) 8px 4px 30px 0px",
-                            position: 'relative'
-                        }}>
-                            <p style={{
-                                textAlign: 'center',
-                                color: '#888F9F',
-                                fontFamily: 'Poppins-Regular'
-                            }}>Employee Tag</p>
-                            {series1.length > 0 ? (
-                                <Chart
-                                    series={series1}
-                                    options={{
-                                        labels: [
-                                            'Active', 'Inactive'
-                                        ],
-                                        legend: {
-                                            position: 'bottom'
-                                        },
-                                        dataLabels: {
-                                            enabled: false
-                                        },
-                                        sparkline: {
-                                            enabled: true
-                                        },
-
-                                        colors: [
-                                            '#3edada', '#a9efef'
-                                        ],
-                                        plotOptions: {
-                                            pie: {
-                                                donut: {
-                                                    labels: {
-                                                        show: true,
-                                                        name: {
-                                                            show: false,
-                                                            // color:'#00629b',
-                                                            offsetY: -16,
-                                                        },
-                                                        total: {
-                                                            show: true,
-                                                            label: '',
-                                                            formatter: () => series1[0] + '/' +
-                                                                (parseInt(series1[0]) + parseInt(series1[1])),
-                                                        },
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }}
-                                    type="donut"
-                                    width="250" />
-                            ) : <p />}
-
-                        </div>
-
-                        <div style={{
-                            width: '240px',
-                            height: '260px',
-                            background: 'white',
-                            borderRadius: '10px',
-                            boxShadow: "rgb(128 128 128 / 20%) 8px 4px 30px 0px",
-                        }}>
-                            <p style={{
-                                textAlign: 'center',
-                                color: '#888F9F',
-                                fontFamily: 'Poppins-Regular'
-                            }}>Asset Tag</p>
-                            {series2.length > 0 ? (
-                                <Chart
-                                    series={series2}
-                                    options={{
-                                        labels: [
-                                            'Active', 'Inactive'
-                                        ],
-                                        legend: {
-                                            position: 'bottom'
-                                        },
-                                        dataLabels: {
-                                            enabled: false
-                                        },
-                                        sparkline: {
-                                            enabled: true
-                                        },
-
-                                        colors: [
-                                            '#ff4d4d', '#ffb3b3'
-                                        ],
-                                        plotOptions: {
-                                            pie: {
-                                                donut: {
-                                                    labels: {
-                                                        show: true,
-                                                        name: {
-                                                            show: false,
-                                                            // color:'#00629b',
-                                                            offsetY: -16,
-                                                        },
-                                                        total: {
-                                                            show: true,
-                                                            label: '',
-                                                            formatter: () => series2[0] + '/' +
-                                                                (parseInt(series2[0]) + parseInt(series2[1])),
-                                                        },
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }}
-                                    type="donut"
-                                    width="250" />
-                            ) : <p />}
-
-                        </div>
-                        <div style={{
-                            width: '240px',
-                            height: '260px',
-                            background: 'white',
-                            borderRadius: '10px',
-                            boxShadow: "rgb(128 128 128 / 20%) 8px 4px 30px 0px",
-                        }}>
-                            <p style={{
-                                textAlign: 'center',
-                                color: '#888F9F',
-                                fontFamily: 'Poppins-Regular'
-                            }}>Utilization</p>
-                            {series3.length > 0 ? (
-                                <Chart
-                                    series={series3}
-                                    options={{
-                                        labels: [
-                                            'Active', 'Inactive'
-                                        ],
-                                        legend: {
-                                            position: 'bottom'
-                                        },
-                                        dataLabels: {
-                                            enabled: false
-                                        },
-                                        sparkline: {
-                                            enabled: true
-                                        },
-
-                                        colors: [
-                                            '#a64dff', '#d9b3ff'
-                                        ],
-                                        plotOptions: {
-                                            pie: {
-                                                donut: {
-                                                    labels: {
-                                                        show: true,
-                                                        name: {
-                                                            show: false,
-                                                            // color:'#00629b',
-                                                            offsetY: -16,
-                                                        },
-                                                        total: {
-                                                            show: true,
-                                                            label: '',
-                                                            formatter: () => series3[0] + '/' +
-                                                                (parseInt(series3[0]) + parseInt(series3[1])),
-                                                        },
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }}
-                                    type="donut"
-                                    width="250" />
-                            ) : <p />}
-                        </div>
-                    </div>
-
-
-                    <div className='actions'>
-                        <h3 style={{
-                            paddingTop: '15px',
-                            color: '#888F9F',
-                            marginLeft: '20px',
-                        }}>Quick Actions</h3>
                         <div style={{
                             display: 'flex',
-                            marginLeft: '30px'
+                            justifyContent: 'space-between',
+                            width: "765px"
                         }}>
-                            <div>
-                                <Link to='/register'>
-                                    <img src="/images/reg.png" alt=""
-                                        style={{
-                                            width: '230px',
-                                            cursor: 'pointer'
-                                        }} /><br />
-                                </Link>
+                            <div style={{
+                                width: '240px',
+                                height: '260px',
+                                background: 'white',
+                                borderRadius: '10px',
+                                boxShadow: "rgb(128 128 128 / 20%) 8px 4px 30px 0px",
+                                position: 'relative'
+                            }}>
+                                <p style={{
+                                    textAlign: 'center',
+                                    color: '#888F9F',
+                                    fontFamily: 'Poppins-Regular'
+                                }}>Employee Tag</p>
+                                {series1.length > 0 ? (
+                                    <Chart
+                                        series={series1}
+                                        options={{
+                                            labels: [
+                                                'Active', 'Inactive'
+                                            ],
+                                            legend: {
+                                                position: 'bottom'
+                                            },
+                                            dataLabels: {
+                                                enabled: false
+                                            },
+                                            sparkline: {
+                                                enabled: true
+                                            },
 
-                                <Link to='/realtime'>
-                                    <img src="/images/realtime.png" alt=""
-                                        style={{
-                                            width: '230px',
-                                            marginTop: '5px',
-                                            cursor: 'pointer'
-                                        }} />
-                                </Link>
+                                            colors: [
+                                                '#3edada', '#a9efef'
+                                            ],
+                                            plotOptions: {
+                                                pie: {
+                                                    donut: {
+                                                        labels: {
+                                                            show: true,
+                                                            name: {
+                                                                show: false,
+                                                                // color:'#00629b',
+                                                                offsetY: -16,
+                                                            },
+                                                            total: {
+                                                                show: true,
+                                                                label: '',
+                                                                formatter: () => series1[0] + '/' +
+                                                                    (parseInt(series1[0]) + parseInt(series1[1])),
+                                                            },
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }}
+                                        type="donut"
+                                        width="250" />
+                                ) : <p />}
+
                             </div>
 
-                            <div>
-                                <Link to='/alerts'>
-                                    <img src="/images/alerts.png" alt=""
-                                        style={{
-                                            width: '230px',
-                                            cursor: 'pointer'
-                                        }} /><br />
-                                </Link>
-                                <Link to='/health'>
-                                    <img src="/images/systemhealth.png" alt=""
-                                        style={{
-                                            width: '230px',
-                                            marginTop: '5px',
-                                            cursor: 'pointer'
-                                        }} />
-                                </Link>
+                            <div style={{
+                                width: '240px',
+                                height: '260px',
+                                background: 'white',
+                                borderRadius: '10px',
+                                boxShadow: "rgb(128 128 128 / 20%) 8px 4px 30px 0px",
+                            }}>
+                                <p style={{
+                                    textAlign: 'center',
+                                    color: '#888F9F',
+                                    fontFamily: 'Poppins-Regular'
+                                }}>Asset Tag</p>
+                                {series2.length > 0 ? (
+                                    <Chart
+                                        series={series2}
+                                        options={{
+                                            labels: [
+                                                'Active', 'Inactive'
+                                            ],
+                                            legend: {
+                                                position: 'bottom'
+                                            },
+                                            dataLabels: {
+                                                enabled: false
+                                            },
+                                            sparkline: {
+                                                enabled: true
+                                            },
+
+                                            colors: [
+                                                '#ff4d4d', '#ffb3b3'
+                                            ],
+                                            plotOptions: {
+                                                pie: {
+                                                    donut: {
+                                                        labels: {
+                                                            show: true,
+                                                            name: {
+                                                                show: false,
+                                                                // color:'#00629b',
+                                                                offsetY: -16,
+                                                            },
+                                                            total: {
+                                                                show: true,
+                                                                label: '',
+                                                                formatter: () => series2[0] + '/' +
+                                                                    (parseInt(series2[0]) + parseInt(series2[1])),
+                                                            },
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }}
+                                        type="donut"
+                                        width="250" />
+                                ) : <p />}
+
                             </div>
-                            <div style={{ marginTop: '35px' }}>
-                                <Link to='/utilization'>
-                                    <img src="/images/utilization.png" alt=""
-                                        style={{
-                                            width: '230px',
-                                            cursor: 'pointer'
-                                        }} />
-                                </Link>
+                            <div style={{
+                                width: '240px',
+                                height: '260px',
+                                background: 'white',
+                                borderRadius: '10px',
+                                boxShadow: "rgb(128 128 128 / 20%) 8px 4px 30px 0px",
+                            }}>
+                                <p style={{
+                                    textAlign: 'center',
+                                    color: '#888F9F',
+                                    fontFamily: 'Poppins-Regular'
+                                }}>Utilization</p>
+                                {series3.length > 0 ? (
+                                    <Chart
+                                        series={series3}
+                                        options={{
+                                            labels: [
+                                                'Active', 'Inactive'
+                                            ],
+                                            legend: {
+                                                position: 'bottom'
+                                            },
+                                            dataLabels: {
+                                                enabled: false
+                                            },
+                                            sparkline: {
+                                                enabled: true
+                                            },
+
+                                            colors: [
+                                                '#a64dff', '#d9b3ff'
+                                            ],
+                                            plotOptions: {
+                                                pie: {
+                                                    donut: {
+                                                        labels: {
+                                                            show: true,
+                                                            name: {
+                                                                show: false,
+                                                                // color:'#00629b',
+                                                                offsetY: -16,
+                                                            },
+                                                            total: {
+                                                                show: true,
+                                                                label: '',
+                                                                formatter: () => series3[0] + '/' +
+                                                                    (parseInt(series3[0]) + parseInt(series3[1])),
+                                                            },
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }}
+                                        type="donut"
+                                        width="250" />
+                                ) : <p />}
+                            </div>
+                        </div>
+
+
+                        <div className='actions'>
+                            <h3 style={{
+                                paddingTop: '15px',
+                                color: '#888F9F',
+                                marginLeft: '20px',
+                            }}>Quick Actions</h3>
+                            <div style={{
+                                display: 'flex',
+                                marginLeft: '30px'
+                            }}>
+                                <div>
+                                    <Link to='/register'>
+                                        <img src="/images/reg.png" alt=""
+                                            style={{
+                                                width: '230px',
+                                                cursor: 'pointer'
+                                            }} /><br />
+                                    </Link>
+
+                                    <Link to='/realtime'>
+                                        <img src="/images/realtime.png" alt=""
+                                            style={{
+                                                width: '230px',
+                                                marginTop: '5px',
+                                                cursor: 'pointer'
+                                            }} />
+                                    </Link>
+                                </div>
+
+                                <div>
+                                    <Link to='/alerts'>
+                                        <img src="/images/alerts.png" alt=""
+                                            style={{
+                                                width: '230px',
+                                                cursor: 'pointer'
+                                            }} /><br />
+                                    </Link>
+                                    <Link to='/health'>
+                                        <img src="/images/systemhealth.png" alt=""
+                                            style={{
+                                                width: '230px',
+                                                marginTop: '5px',
+                                                cursor: 'pointer'
+                                            }} />
+                                    </Link>
+                                </div>
+                                <div style={{ marginTop: '35px' }}>
+                                    <Link to='/utilization'>
+                                        <img src="/images/utilization.png" alt=""
+                                            style={{
+                                                width: '230px',
+                                                cursor: 'pointer'
+                                            }} />
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                </div>
-                <div style={{
-                    float: 'right',
-                    width: '27%',
-                    background: 'white',
-                    marginTop: '-430px',
-                    marginRight: '10px',
-                    marginBottom: "10px",
-                    height: '280px',
-                    borderRadius: '10px',
-                    boxShadow: "rgb(128 128 128 / 20%) 8px 4px 30px 0px",
-                }}>
                     <div style={{
-                        display: 'flex',
-                        justifyContent: 'center'
+                        float: 'right',
+                        width: '25%',
+                        background: 'white',
+                        marginTop: '-430px',
+                        marginRight: '15px',
+                        marginBottom: "10px",
+                        height: '280px',
+                        borderRadius: '10px',
+                        boxShadow: "rgb(128 128 128 / 20%) 8px 4px 30px 0px",
                     }}>
-                        <i className="far fa-bell"
-                            style={{
-                                fontSize: '20px',
-                                paddingTop: '14px',
-                                color: '#888F9F',
-                                marginRight: '6px'
-                            }}></i>
-                        <h3 style={{
-                            paddingTop: '10px',
-                            color: '#888F9F',
-                            margin: '0px',
-                            textAlign: 'center'
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center'
                         }}>
-                            Alerts History
-                        </h3>
-                    </div>
-                    {
-                        series.length ? (
-                            <div>
+                            <i className="far fa-bell"
+                                style={{
+                                    fontSize: '20px',
+                                    paddingTop: '14px',
+                                    color: '#888F9F',
+                                    marginRight: '6px'
+                                }}></i>
+                            <h3 style={{
+                                paddingTop: '10px',
+                                color: '#888F9F',
+                                margin: '0px',
+                                textAlign: 'center'
+                            }}>
+                                Alerts History
+                            </h3>
+                        </div>
+                        {
+                            series.length ? (
                                 <div>
-                                    <div id="chart">
-                                        <div id="chart-timeline">
-                                            <ApexCharts options={this.state.options}
-                                                series={series} type="area" height={250} />
+                                    <div>
+                                        <div id="chart">
+                                            <div id="chart-timeline">
+                                                <ApexCharts options={this.state.options}
+                                                    series={series} type="area" height={250} />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ) : (<p />)
-                    }
-                </div>
+                            ) : (<p />)
+                        }
+                    </div>
 
 
-                <div id="sessionModal" className="modal">
-                    <div className="modal-content">
-                        <p id="content"
-                            style={{ textAlign: "center" }}></p>
-                        <button
-                            id="okBtn"
-                            className="btn-center btn success-btn"
-                            onClick={this.sessionTimeout}>
-                            OK
-                        </button>
+                    <div id="sessionModal" className="modal">
+                        <div className="modal-content">
+                            <p id="content"
+                                style={{ textAlign: "center" }}></p>
+                            <button
+                                id="okBtn"
+                                className="btn-center btn success-btn"
+                                onClick={this.sessionTimeout}>
+                                OK
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </>
         )
     }
 }

@@ -20,7 +20,7 @@ export default class Employeereg extends Component {
 
         }
         if (!$("#tagid").val().match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
-            this.setState({ error: true, message: 'Invalid Tag ID' })
+            this.setState({ error: true, message1: 'Invalid Tag ID' })
         } else if (data.name !== "" && data.tagid !== "" && data.empid !== "") {
             axios({ method: 'POST', url: '/api/employee/registration', data: data })
                 .then((response) => {
@@ -32,6 +32,11 @@ export default class Employeereg extends Component {
                         $('#empid').val('');
                     } else if (response.status === 406) {
                         this.setState({ success: true, message1: response.data.message })
+                    } else if (response.status === 208) {
+                        this.setState({ success: true, message1: 'Already Exist!' })
+                        $('#empname').val('');
+                        $('#tagid').val('');
+                        $('#empid').val('');
                     }
                 }).catch((error) => { // console.log(error);
                     if (error.response.status === 403) {
@@ -39,6 +44,7 @@ export default class Employeereg extends Component {
                     } else if (error.response.status === 400) {
                         this.setState({ error: true, message: 'Bad Request!' })
                     }
+                    
 
                 })
         } else {
@@ -57,7 +63,7 @@ export default class Employeereg extends Component {
 
             axios({ method: 'DELETE', url: '/api/employee/registration', data: data }).then((response) => {
                 if (response.status === 200 || response.status === 201) {
-                    this.setState({ success: true, message: 'Employee Tag Removed Successfullyy' })
+                    this.setState({ success: true, message1: 'Employee Tag Removed Successfullyy' })
                     $('#id').val('');
                     $('#deletetag').hide();
                 }
@@ -65,6 +71,12 @@ export default class Employeereg extends Component {
                 if (error.response.status === 403) {
                     $("#sessionModal").css("display", "block");
                     $("#content").text("User Session has timed out. Please Login again");
+                }
+                else if (error.response.status === 208) {
+                    this.setState({ error: true, message1: 'Already Exist!' })
+                }
+                else if (error.response.status === 404) {
+                    this.setState({ error: true, message: 'Not Foound!' })
                 }
 
             })

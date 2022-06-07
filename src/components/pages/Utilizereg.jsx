@@ -30,6 +30,10 @@ export default class Utilizereg extends Component {
                         $('#tagid').val('');
                     } else if (response.status === 406) {
                         this.setState({ success: true, message1: response.data.message })
+                    } else if (response.status === 208) {
+                        this.setState({ success: true, message1: 'Already Exist!' })
+                        $('#sysname').val('');
+                        $('#tagid').val('');
                     }
                 }).catch((error) => {
                     if (error.response.status === 403) {
@@ -251,3 +255,11 @@ export default class Utilizereg extends Component {
         )
     }
 }
+
+
+
+// <div className='utilCard' id='statuscolor' style={{ marginLeft: "30px", }}  >
+//     <p className='utilCardText'>Status</p>
+//     <p className='utilCardText' style={{ marginTop: '-6px' }}>
+//         <span id='statustext' style={{ fontSize: '25px', fontWeight: 600 }}> </span></p>
+// </div>

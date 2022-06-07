@@ -284,3 +284,13 @@ td {
   color: rgb(136, 143, 159);
   font-family: Poppins-Regular;
 }
+
+.rnc__base .rnc__notification-container--top-right .rnc__notification {
+  width: 265px !important;
+  margin-left: 40px;
+  margin-bottom: 50px;
+}
+
+.rnc__notification-item{
+  margin-bottom: 0px !important;
+}

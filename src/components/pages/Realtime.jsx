@@ -17,10 +17,9 @@ export default class Realtime extends Component {
   }
 
   search = (status) => {
-    console.log("$$$$$$", status);
     if (status === "User Session has timed out. Please Login again") {
       $("#sessionModal").css("display", "block");
-      $("#mapview").css("display","none")
+      $("#mapview").css("display", "none")
       $("#content").text("User Session has timed out. Please Login again");
     } else {
       this.setState({ error: true, message: status });
@@ -53,7 +52,7 @@ export default class Realtime extends Component {
           </div>
 
           <div style={{ marginBottom: "20px", marginLeft: "35px" }}>
-            {error && (
+            {/* {error && (
               <div style={{ color: 'red' }}>
                 <strong>{message}</strong>
               </div>
@@ -63,7 +62,7 @@ export default class Realtime extends Component {
               <div style={{ color: 'green', }}>
                 <strong>{message}</strong>
               </div>
-            )}
+            )} */}
             <div id="sessionModal" className="modal">
               <div className="modal-content">
                 <p id="content"
