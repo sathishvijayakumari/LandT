@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { sidelinkClicked } from '../leftsidebar/Leftsidebar';
 import MapView from "../MapView";
 import $ from "jquery";
+import MapChecking from './MapChecking';
 
 export default class Realtime extends Component {
   constructor() {
@@ -52,17 +53,6 @@ export default class Realtime extends Component {
           </div>
 
           <div style={{ marginBottom: "20px", marginLeft: "35px" }}>
-            {/* {error && (
-              <div style={{ color: 'red' }}>
-                <strong>{message}</strong>
-              </div>
-            )}
-
-            {success && (
-              <div style={{ color: 'green', }}>
-                <strong>{message}</strong>
-              </div>
-            )} */}
             <div id="sessionModal" className="modal">
               <div className="modal-content">
                 <p id="content"

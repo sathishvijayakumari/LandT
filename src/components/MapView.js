@@ -92,11 +92,16 @@ class MapView extends Component {
     super(props);
     this.state = {
       currentLocation: { lat: 12.9311, lng: 77.6232 },
-      zoom: 19,
+      searchId: "",
+      zoom: 5,
       trackType: "gps",
       res_data: [],
+      error: false,
+      message: "",
+      map: null,
       count: [0, 0, 0, 0],
     }
+    this.mapRef = React.createRef();
   }
 
   componentDidMount() {
@@ -117,6 +122,7 @@ class MapView extends Component {
 
   trackingInterval = (tagHide) => {
     if (tagHide === "clear") {
+      console.log("CLEAR");
       $("#tagid").val("");
       clearInterval(this.interval1);
     }
@@ -126,56 +132,19 @@ class MapView extends Component {
     }, 5 * 1000)
   }
 
-  // trackingAllData = () => {
-  //   this.setState({ res_data: [], count: [0, 0, 0, 0] });
-  //   clearInterval(this.interval2);
-  //   axios({ method: "GET", url: "/api/tracking" })
-  //     .then((res) => {
-  //       if (res.status === 200 || res.status === 201) {
-  //         console.log("===----==>", res);
-  //         let data = res.data;
-  //         let emp = 0, ass = 0, pan = 0, free = 0;
-  //         for (let i = 0; i < data.length; i++) {
-  //           if (data[i].value === 1) {
-  //             pan += 1;
-  //           } else if (data[i].value === 3) {
-  //             free += 1;
-  //           } else if (data[i].type === 1 && data[i].value.length === 0) {
-  //             emp += 1;
-  //           } else if (data[i].type === 2 && data[i].value.length === 0) {
-  //             ass += 1;
-  //           } 
-  //         }
-  //         console.log("------->", [emp, ass, pan, free]);
-  //         if (data.length > 0) {
-  //           this.setState({ res_data: data, count: [emp, ass, pan, free] });
-  //         } else {
-  //           this.props.search("No data Found.");
-  //         }
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log("=====>", error);
-  //       let errorStaus = "";
-  //       if (error.response.status === 403) {
-  //         errorStaus = "User Session has timed out. Please Login again"
-  //       } else if (error.response.status === 400) {
-  //         errorStaus = "Bad Request!";
-  //       } else if (error.response.status === 404) {
-  //         errorStaus = "No data Found.";
-  //       }
-  //       this.props.search(errorStaus);
-  //     })
-  // }
-
   getGpsIpsData = (type) => {
     this.optionChange(type);
-    this.setState({ trackType: type, res_data: [], count: [0, 0, 0, 0] });
+    this.setState({
+      trackType: type, res_data: [],
+      count: [0, 0, 0, 0],
+      currentLocation: { lat: 12.9311, lng: 77.6232 },
+      zoom: 5,
+    });
     clearInterval(this.interval2);
     axios({ method: "POST", url: "/api/tracking/gps/ips", data: { key: type } })
       .then((res) => {
         if (res.status === 200 || res.status === 201) {
-          console.log("===----==>", res);
+          console.log("getGpsIpsData======>", res);
           let data = res.data;
           let emp = 0, ass = 0, pan = 0, free = 0;
           for (let i = 0; i < data.length; i++) {
@@ -186,12 +155,19 @@ class MapView extends Component {
             } else if (data[i].type === 1 && data[i].value.length === 0) {
               emp += 1;
             } else if (data[i].type === 2 && data[i].value.length === 0) {
-              ass += 1;
+              if ((new Date() - new Date(data[i].lastseen)) <= (2 * 60 * 1000)) {
+                ass += 1;
+              }
             }
           }
-          if (data.length > 0) {
-            this.setState({ res_data: data, count: [emp, ass, pan, free] });
+          if (data.length !== 0 || data.length > 0) {
+            this.setState({
+              res_data: data, count: [emp, ass, pan, free],
+              error: false, message: ""
+            });
+
           } else {
+            this.setState({ error: true, message: "No data Found." })
             this.props.search("No data Found.");
           }
         }
@@ -202,8 +178,10 @@ class MapView extends Component {
         if (error.response.status === 403) {
           errorStaus = "User Session has timed out. Please Login again"
         } else if (error.response.status === 400) {
+          this.setState({ error: true, message: "Bad Request!" })
           errorStaus = "Bad Request!";
         } else if (error.response.status === 404) {
+          this.setState({ error: true, message: "No data Found." })
           errorStaus = "No data Found.";
         }
         this.props.search(errorStaus);
@@ -211,17 +189,21 @@ class MapView extends Component {
   }
 
   locationSearchInt = () => {
-    this.locationSearch();
+    clearInterval(this.interval1);
+    clearInterval(this.interval2);
+    this.setState({ searchId: $("#tagid").val() })
+    let val = $("#tagid").val();
+    this.locationSearch(val);
     this.interval2 = setInterval(() => {
-      this.locationSearch();
+      this.locationSearch1(this.state.searchId);
     }, 5 * 1000)
   }
-
-  locationSearch = () => {
-    clearInterval(this.interval1);
-    let tagid = $("#tagid").val();
+  locationSearch = (val) => {
+    // console.log("searchId=====>", val);
+    let tagid = val;
     if (tagid.length !== 0) {
       if (!tagid.match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
+        this.setState({ error: true, message: "Invalid Mac ID." })
         this.props.search("Invalid Asset ID");
       } else {
         this.setState({ res_data: [] });
@@ -231,11 +213,21 @@ class MapView extends Component {
               console.log("locationSearch===----==>", res);
               let data = res.data;
               if (data.length !== 0) {
-                this.setState({ res_data: data })
+                this.setState({
+                  res_data: data,
+                  currentLocation: { lat: data[0].lat, lng: data[0].lan },
+                })
+                const { current = {} } = this.mapRef;
+                const { leafletElement: map } = current;
+                map.flyTo([data[0].lat, data[0].lan], 15, {
+                  duration: 2
+                });
+                this.setState({ error: false, message: "" })
+
               } else {
+                this.setState({ error: true, message: "No search data found." })
                 this.props.search("No data Found.");
               }
-
             }
           })
           .catch((error) => {
@@ -245,8 +237,59 @@ class MapView extends Component {
               errorStaus = "User Session has timed out. Please Login again"
             } else if (error.response.status === 400) {
               errorStaus = "Bad Request!";
+              this.setState({ error: true, message: "Bad Request!" });
             } else if (error.response.status === 404) {
-              errorStaus = "No data Found.";
+              errorStaus = "No search data found.";
+              this.setState({ error: true, message: "No search data found." })
+            }
+            this.props.search(errorStaus);
+          })
+      }
+    } else {
+      this.setState({ error: true, message: "Required TagID" })
+      this.props.search("Required TagID.");
+    }
+  }
+
+  locationSearch1 = (val) => {
+    console.log("searchId=====>", val);
+    let tagid = val;
+    if (tagid.length !== 0) {
+      if (!tagid.match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
+        this.setState({ error: true, message: "Invalid Mac ID." })
+        this.props.search("Invalid Asset ID");
+      } else {
+        this.setState({ res_data: [] });
+        axios({ method: "POST", url: "/api/tracking", data: { tagid: tagid } })
+          .then((res) => {
+            if (res.status === 200 || res.status === 201) {
+              console.log("locationSearch===----==>", res);
+              let data = res.data;
+              if (data.length !== 0) {
+                this.setState({
+                  res_data: data,
+                  currentLocation: { lat: data[0].lat, lng: data[0].lan },
+                  // zoom: 18,
+                })
+                this.setState({ error: false, message: "" })
+
+              } else {
+                this.setState({ error: true, message: "No search data found." })
+                this.props.search("No data Found.");
+              }
+            }
+          })
+          .catch((error) => {
+            console.log("=====>", error);
+            let errorStaus = "";
+            if (error.response.status === 403) {
+              errorStaus = "User Session has timed out. Please Login again"
+            } else if (error.response.status === 400) {
+              errorStaus = "Bad Request!";
+              this.setState({ error: true, message: "Bad Request!" });
+            } else if (error.response.status === 404) {
+              errorStaus = "No search data found.";
+              this.setState({ error: true, message: "No search data found." })
             }
             this.props.search(errorStaus);
           })
@@ -263,7 +306,8 @@ class MapView extends Component {
   };
 
   render() {
-    const { currentLocation, zoom, res_data, count } = this.state;
+    const { currentLocation, zoom, res_data, count, message, error } = this.state;
+
     return (
       <div style={{ marginLeft: '35px' }}>
         <div className="inputdiv" style={{ margin: "-20px 0px 20px 0px", display: "flex" }}>
@@ -272,6 +316,7 @@ class MapView extends Component {
             name="tagid"
             placeholder='5a-c2-15-00-00-00'
             id="tagid"
+            // onChange={(e) => this.setState({ searchId : e.target.value})}
             required="required" />
 
           <i className="far fa-search"
@@ -288,6 +333,7 @@ class MapView extends Component {
           <div
             onClick={() => this.trackingInterval("clear")}
             style={{
+              cursor: "pointer",
               marginLeft: "30px",
               width: "90px",
               height: "35px",
@@ -297,7 +343,6 @@ class MapView extends Component {
             }} >
             <p
               style={{
-                cursor: "pointer",
                 color: "#FFF",
                 fontSize: "18px",
                 position: "absolute",
@@ -331,6 +376,12 @@ class MapView extends Component {
           </div>
         </div>
 
+
+        {error && (
+          <div style={{ color: 'red' }}>
+            <strong>{message}</strong>
+          </div>
+        )}
         <div style={{ marginTop: "15px", display: "flex", marginBottom: "15px" }}>
           <div style={{ display: "flex" }}>
             <div>
@@ -350,7 +401,7 @@ class MapView extends Component {
                   fontSize: '20px',
                   marginRight: '5px',
                   marginTop: "2px",
-                  color: '#9933ff'
+                  color: '#00ff55'
                 }}></i>
               <span style={{ fontSize: "17px" }}>Asset Tag({count[1]})</span>
             </div>
@@ -377,7 +428,7 @@ class MapView extends Component {
               <span style={{ fontSize: "17px" }}>Falldown({count[3]})</span>
             </div>
 
-            <div style={{ marginLeft: "15px" }}>
+            {/*<div style={{ marginLeft: "15px" }}>
               <i className="fas fa-map-marker-alt"
                 style={{
                   fontSize: '20px',
@@ -386,12 +437,14 @@ class MapView extends Component {
                   color: '#800080'
                 }}></i>
               <span style={{ fontSize: "17px" }}>Inactive</span>
-            </div>
+              </div> */}
+
           </div>
         </div>
 
 
         <Map
+          ref={this.mapRef}
           scrollWheelZoom={true}
           center={currentLocation}
           zoom={zoom}
@@ -405,22 +458,9 @@ class MapView extends Component {
               <Markers venues={res_data} />
             )
           }
-          <Polyline color='lime' positions={multiPolyline} />
+          {/*<Polyline color='lime' positions={multiPolyline} /> */}
         </Map>
-
-        <div id="sessionModal" className="modal">
-          <div className="modal-content">
-            <p id="content"
-              style={{ textAlign: "center" }}></p>
-            <button
-              id="okBtn"
-              className="btn-center btn success-btn"
-              onClick={this.sessionTimeout}>
-              OK
-            </button>
-          </div>
-        </div>
-      </div >
+      </div>
     );
   }
 }

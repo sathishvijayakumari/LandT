@@ -8,6 +8,7 @@ import Health from './components/pages/Health';
 import Alerts from './components/pages/Alerts';
 import Registration from './components/pages/Registration';
 import Utilize from './components/pages/Utilize';
+import MapChecking from './components/pages/MapChecking';
 
 export default class App extends Component {
   constructor() {
@@ -56,3 +57,15 @@ export default class App extends Component {
     }
   }
 }
+{/*<Router>
+          <Leftsidebar />
+          <Routes>
+            <Route path="/login" element={<Navigate to="/home" />} />
+            <Route exact path="/home" element={<Home />} />
+            <Route exact path="/realtime" element={<MapChecking />} />
+            <Route exact path="/health" element={<Health />} />
+            <Route exact path="/alerts" element={<Alerts />} />
+            <Route exact path="/register" element={<Registration />} />
+            <Route exact path="/utilization" element={<Utilize />} />
+          </Routes>
+      </Router> */}

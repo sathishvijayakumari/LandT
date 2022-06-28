@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 import React, { Fragment } from 'react'
 import { Marker } from 'react-leaflet';
 import MarkerPopup from './MarkerPopup';
@@ -37,13 +38,15 @@ const VenueMarkers = (props) => {
   const markers = venues.map(function (venue, index) {
 
     if ((new Date() - new Date(venue.lastseen)) >= (2 * 60 * 1000)) {
-      return (
+      return null;
+      // eslint-disable-next-line no-lone-blocks
+      {/*(
         <Marker key={index}
-          position={[venue.lat, venue.lan]}
-          icon={inactiveIcon} >
-          <MarkerPopup data={venue} />
-        </Marker>
-      )
+        position={[venue.lat, venue.lan]}
+        icon={inactiveIcon} >
+        <MarkerPopup data={venue} />
+      </Marker>) */}
+
     } else if (venue.value === 1 && (venue.lat !== 0 && venue.lan !== 0)) {
       return (
         <Marker key={index}

@@ -122,9 +122,9 @@ export default class Home extends Component {
                             value.push(alertHistory);
                         }
                         this.setState({ series: [{ name: 'Count', data: value }] })
+                    } else {
+                        $("#alertMsg").css("display", "block");
                     }
-                } else {
-                    this.setState({ error: true, message: 'No Petrol data found.' })
                 }
 
             })
@@ -136,7 +136,8 @@ export default class Home extends Component {
                 } else if (error.response.status === 400) {
                     this.setState({ error: true, message: 'Bad request!' })
                 } else if (error.response.status === 404) {
-                    this.setState({ error: true, message: 'No Petrol data found.' })
+                    $("#alertMsg").css("display", "block");
+                    this.setState({ error: true, message: 'No alert history data found.' })
                 }
             })
     }
@@ -178,7 +179,7 @@ export default class Home extends Component {
     //         container: "top-right",
     //         animationIn: ["animated", "zoomIn"],
     //         animationOut: ["animated", "zoomOut"],
-           
+
     //     });
     // }
     render() {
@@ -470,6 +471,12 @@ export default class Home extends Component {
                                 Alerts History
                             </h3>
                         </div>
+                        <h4 id="alertMsg" style={{
+                            fontSize: '18px',
+                            color: '#F00',
+                            display:"none",
+                            textAlign: "center"
+                        }}>No Alert Data found!</h4>
                         {
                             series.length ? (
                                 <div>
